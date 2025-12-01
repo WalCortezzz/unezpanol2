@@ -1,0 +1,39 @@
+name: CI - UNEZPAÑOL
+
+on: 
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Pylint
+      run: |
+        pylint interprete.py || true
+
+    - name: Run MyPy
+      run: |
+        mypy interprete.py --ignore-missing-imports
+
+    - name: Run tests
+      run: pytest -q
+
+    - name: Coverage report
+      run: |
+        coverage run -m pytest
+        coverage report -m
